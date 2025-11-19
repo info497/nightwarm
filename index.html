@@ -81,7 +81,7 @@ let answers = [];
 async function loadQuestions() {
     try {
         // 🔥 重要：相対パスで読み込む（あなたの構造に合わせた最適解）
-        const response = await fetch("./questions/behavior.json");
+        const response = await fetch("questions/behavior.json");
 
         if (!response.ok) throw new Error("HTTP " + response.status);
 
