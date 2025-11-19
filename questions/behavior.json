@@ -1,315 +1,109 @@
 {
-  "behavior_questions": [
+  "version": "1.0",
+  "title": "足の冷えチェック",
+  "description": "NightWarmが行う、足の冷えレベル診断フロー",
+  "questions": [
     {
-      "id": "sitting_time",
-      "question": "日中、座っている時間はどのくらいですか？",
-      "type": "radio",
+      "id": "q1",
+      "text": "今、足先はどのくらい冷たいですか？",
+      "type": "choice",
       "options": [
-        {"label": "1時間未満", "value": 0},
-        {"label": "1〜3時間", "value": 1},
-        {"label": "3〜6時間", "value": 2},
-        {"label": "6時間以上", "value": 3}
+        { "value": "warm", "label": "あたたかい" },
+        { "value": "slightly_cold", "label": "少し冷たい" },
+        { "value": "cold", "label": "冷たい" },
+        { "value": "very_cold", "label": "とても冷たい" }
       ],
-      "weight": 3
+      "next": {
+        "warm": "q2",
+        "slightly_cold": "q2",
+        "cold": "q2",
+        "very_cold": "q2"
+      }
     },
+
     {
-      "id": "leg_crossing",
-      "question": "座っているとき、脚を組むことはありますか？",
-      "type": "radio",
+      "id": "q2",
+      "text": "足首やふくらはぎも冷えていますか？",
+      "type": "choice",
       "options": [
-        {"label": "いつも組む", "value": 3},
-        {"label": "ときどき組む", "value": 2},
-        {"label": "ほとんど組まない", "value": 1},
-        {"label": "全く組まない", "value": 0}
+        { "value": "none", "label": "冷えていない" },
+        { "value": "ankle", "label": "足首が冷えている" },
+        { "value": "calf", "label": "ふくらはぎが冷えている" },
+        { "value": "both", "label": "足首もふくらはぎも冷えている" }
       ],
-      "weight": 2
+      "next": {
+        "none": "q3",
+        "ankle": "q3",
+        "calf": "q3",
+        "both": "q3"
+      }
     },
+
     {
-      "id": "feet_not_touching",
-      "question": "椅子に座ると足が床につかずブラブラすることがありますか？",
-      "type": "radio",
+      "id": "q3",
+      "text": "日中も足の冷えを感じることがありますか？",
+      "type": "choice",
       "options": [
-        {"label": "よくある", "value": 2},
-        {"label": "ときどきある", "value": 1},
-        {"label": "ほとんどない", "value": 0}
+        { "value": "never", "label": "感じない" },
+        { "value": "sometimes", "label": "ときどきある" },
+        { "value": "often", "label": "よくある" },
+        { "value": "always", "label": "常にある" }
       ],
-      "weight": 2
+      "next": {
+        "never": "q4",
+        "sometimes": "q4",
+        "often": "q4",
+        "always": "q4"
+      }
     },
+
     {
-      "id": "standing_long",
-      "question": "長時間立ちっぱなしの時間はありますか？",
-      "type": "radio",
+      "id": "q4",
+      "text": "就寝時、足が冷たくて寝つけないことがありますか？",
+      "type": "choice",
       "options": [
-        {"label": "ほぼ毎日", "value": 2},
-        {"label": "週に数回", "value": 1},
-        {"label": "ほとんどない", "value": 0}
+        { "value": "no", "label": "ない" },
+        { "value": "rare", "label": "たまにある" },
+        { "value": "yes", "label": "よくある" }
       ],
-      "weight": 2
+      "next": {
+        "no": "q5",
+        "rare": "q5",
+        "yes": "q5"
+      }
     },
+
     {
-      "id": "standing_bias",
-      "question": "立っているとき、体重が片側に偏る癖がありますか？",
-      "type": "radio",
+      "id": "q5",
+      "text": "普段、足やふくらはぎを動かす運動習慣はありますか？",
+      "type": "choice",
       "options": [
-        {"label": "よくある", "value": 2},
-        {"label": "ときどきある", "value": 1},
-        {"label": "ほとんどない", "value": 0}
+        { "value": "active", "label": "毎日ある" },
+        { "value": "sometimes", "label": "ときどきある" },
+        { "value": "rare", "label": "ほとんどない" },
+        { "value": "none", "label": "まったくない" }
       ],
-      "weight": 1
-    },
-    {
-      "id": "squat_posture",
-      "question": "しゃがみ姿勢・中腰姿勢をよくしますか？",
-      "type": "radio",
-      "options": [
-        {"label": "よくする", "value": 2},
-        {"label": "ときどきする", "value": 1},
-        {"label": "ほとんどしない", "value": 0}
-      ],
-      "weight": 1
-    },
-    {
-      "id": "steps",
-      "question": "1日の歩数はどのくらいですか？",
-      "type": "radio",
-      "options": [
-        {"label": "3000歩未満", "value": 3},
-        {"label": "3000～6000歩", "value": 2},
-        {"label": "6000～9000歩", "value": 1},
-        {"label": "9000歩以上", "value": 0}
-      ],
-      "weight": 4
-    },
-    {
-      "id": "leg_training",
-      "question": "足の筋トレ（スクワット・カーフレイズ）をしていますか？",
-      "type": "radio",
-      "options": [
-        {"label": "ほぼ毎日", "value": 0},
-        {"label": "週に数回", "value": 1},
-        {"label": "ほとんどしない", "value": 2}
-      ],
-      "weight": 3
-    },
-    {
-      "id": "cardio_freq",
-      "question": "週に何回、有酸素運動をしますか？",
-      "type": "radio",
-      "options": [
-        {"label": "4回以上", "value": 0},
-        {"label": "1～3回", "value": 1},
-        {"label": "ほとんどしない", "value": 2}
-      ],
-      "weight": 3
-    },
-    {
-      "id": "cold_day_activity",
-      "question": "寒い日でも意識して体を動かしますか？",
-      "type": "radio",
-      "options": [
-        {"label": "よく動く", "value": 0},
-        {"label": "あまり動かない", "value": 2}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "stretch",
-      "question": "足首・ふくらはぎのストレッチをしていますか？",
-      "type": "radio",
-      "options": [
-        {"label": "ほぼ毎日", "value": 0},
-        {"label": "週に数回", "value": 1},
-        {"label": "ほとんどしない", "value": 2}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "morning_warmup",
-      "question": "朝、体が温まりにくいと感じますか？",
-      "type": "radio",
-      "options": [
-        {"label": "よくある", "value": 2},
-        {"label": "ときどきある", "value": 1},
-        {"label": "ほとんどない", "value": 0}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "sock_layers",
-      "question": "寒い日、靴下は何枚履きますか？",
-      "type": "radio",
-      "options": [
-        {"label": "0枚", "value": 2},
-        {"label": "1枚", "value": 0},
-        {"label": "2枚", "value": 1},
-        {"label": "3枚以上", "value": 2}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "compression_sock",
-      "question": "着圧ソックスを常用していますか？",
-      "type": "radio",
-      "options": [
-        {"label": "毎日", "value": 2},
-        {"label": "ときどき", "value": 1},
-        {"label": "使わない", "value": 0}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "tight_sock",
-      "question": "強めのゴムの靴下を履くことが多いですか？",
-      "type": "radio",
-      "options": [
-        {"label": "多い", "value": 2},
-        {"label": "ときどき", "value": 1},
-        {"label": "少ない", "value": 0}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "shoes_fit",
-      "question": "靴のサイズは適正ですか？",
-      "type": "radio",
-      "options": [
-        {"label": "きつい", "value": 2},
-        {"label": "ちょうどよい", "value": 0},
-        {"label": "ゆるい", "value": 1}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "indoor_style",
-      "question": "室内ではどう過ごしていますか？",
-      "type": "radio",
-      "options": [
-        {"label": "裸足", "value": 2},
-        {"label": "スリッパ", "value": 1},
-        {"label": "靴下＋スリッパ", "value": 0}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "sleep_socks",
-      "question": "寝るときに靴下を履きますか？",
-      "type": "radio",
-      "options": [
-        {"label": "毎日", "value": 1},
-        {"label": "ときどき", "value": 1},
-        {"label": "履かない", "value": 0}
-      ],
-      "weight": 1
-    },
-    {
-      "id": "bath_type",
-      "question": "毎日湯船につかりますか？",
-      "type": "radio",
-      "options": [
-        {"label": "シャワーのみ", "value": 3},
-        {"label": "40℃未満", "value": 2},
-        {"label": "40〜41℃", "value": 0},
-        {"label": "42℃以上", "value": 1}
-      ],
-      "weight": 4
-    },
-    {
-      "id": "warm_feel_duration",
-      "question": "お風呂上がりのポカポカはどれくらい続きますか？",
-      "type": "radio",
-      "options": [
-        {"label": "10分以内", "value": 3},
-        {"label": "10〜30分", "value": 1},
-        {"label": "30分以上", "value": 0}
-      ],
-      "weight": 3
-    },
-    {
-      "id": "pre_sleep_warm",
-      "question": "寝る前に手足を温める習慣はありますか？",
-      "type": "radio",
-      "options": [
-        {"label": "ほぼ毎日", "value": 0},
-        {"label": "ときどき", "value": 1},
-        {"label": "ほとんどない", "value": 2}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "bath_timing",
-      "question": "入浴のタイミングは？",
-      "type": "radio",
-      "options": [
-        {"label": "朝シャワー", "value": 2},
-        {"label": "夜入浴", "value": 0}
-      ],
-      "weight": 1
-    },
-    {
-      "id": "warm_drink",
-      "question": "温かい飲み物（白湯・お茶）をどれくらい飲みますか？",
-      "type": "radio",
-      "options": [
-        {"label": "毎日", "value": 0},
-        {"label": "ときどき", "value": 1},
-        {"label": "ほとんど飲まない", "value": 2}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "cold_drink",
-      "question": "冷たい飲み物をよく飲みますか？",
-      "type": "radio",
-      "options": [
-        {"label": "毎日", "value": 2},
-        {"label": "ときどき", "value": 1},
-        {"label": "ほとんど飲まない", "value": 0}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "ice_habit",
-      "question": "アイス・氷入り飲料を毎日摂りますか？",
-      "type": "radio",
-      "options": [
-        {"label": "毎日", "value": 2},
-        {"label": "ときどき", "value": 1},
-        {"label": "ほとんど食べない", "value": 0}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "aircon_exposure",
-      "question": "冷房の効いた部屋で長時間過ごしますか？",
-      "type": "radio",
-      "options": [
-        {"label": "長時間いる", "value": 2},
-        {"label": "ときどきいる", "value": 1},
-        {"label": "ほとんどいない", "value": 0}
-      ],
-      "weight": 2
-    },
-    {
-      "id": "phone_posture",
-      "question": "スマホ操作で長時間同じ姿勢になりますか？",
-      "type": "radio",
-      "options": [
-        {"label": "よくある", "value": 2},
-        {"label": "ときどきある", "value": 1},
-        {"label": "ほとんどない", "value": 0}
-      ],
-      "weight": 1
-    },
-    {
-      "id": "sleep_quality",
-      "question": "夜更かし・睡眠不足が続いていますか？",
-      "type": "radio",
-      "options": [
-        {"label": "よくある", "value": 2},
-        {"label": "ときどきある", "value": 1},
-        {"label": "ほとんどない", "value": 0}
-      ],
-      "weight": 3
+      "next": {
+        "active": "result",
+        "sometimes": "result",
+        "rare": "result",
+        "none": "result"
+      }
     }
-  ]
+  ],
+
+  "results": {
+    "low": {
+      "label": "冷えレベル：低い",
+      "message": "軽度の冷えです。現在のケアを継続しましょう。"
+    },
+    "medium": {
+      "label": "冷えレベル：中程度",
+      "message": "冷えの兆候があります。温熱ケアをとりいれましょう。"
+    },
+    "high": {
+      "label": "冷えレベル：高い",
+      "message": "強い冷えが疑われます。就寝前の温めケアが有効です。"
+    }
+  }
 }
