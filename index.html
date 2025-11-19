@@ -3,246 +3,97 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NightWarm</title>
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0033cc">
-
-  <!-- アイコン -->
-  <link rel="icon" href="icons/icon-192.png">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-
-  <!-- UI 基本デザイン -->
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f4f7fc;
-      color: #333;
-    }
-
-    header {
-      background: #0033cc;
-      color: #fff;
-      text-align: center;
-      padding: 20px 10px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
-
-    #app {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .question-box {
-      background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-
-    .question-title {
-      font-size: 1.2rem;
-      margin-bottom: 16px;
-      font-weight: bold;
-    }
-
-    .option {
-      background: #eaf0ff;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .option:hover {
-      background: #d6e3ff;
-    }
-
-    .option.selected {
-      background: #0033cc;
-      color: white;
-    }
-
-    .nav-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-
-    button {
-      border: none;
-      padding: 12px 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-
-    .back-btn {
-      background: #ccc;
-      color: #333;
-    }
-
-    .next-btn {
-      background: #0033cc;
-      color: #fff;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    #result {
-      background: #fff;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    #score {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #0033cc;
-      text-align: center;
-    }
-
-    #advice {
-      margin-top: 20px;
-      line-height: 1.8;
-      white-space: pre-line;
-    }
-  </style>
+  <title>夜間頻尿 × 冷えケア診断</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <header>
-    <h1>NightWarm（夜間頻尿 × 冷えケア）</h1>
-  </header>
+  <div class="container">
+    <h1>夜間頻尿 × 冷えケア診断（12問）</h1>
 
-  <div id="app">
-    <div id="question-section" class="question-box">
-      <div id="question-text" class="question-title"></div>
+    <div id="question-container">
+      <p id="question-text">読み込み中...</p>
+
       <div id="options"></div>
 
       <div class="nav-buttons">
-        <button id="backBtn" class="back-btn">戻る</button>
-        <button id="nextBtn" class="next-btn">次へ</button>
+        <button id="back-btn" disabled>戻る</button>
+        <button id="next-btn" disabled>次へ</button>
       </div>
-    </div>
-
-    <div id="result" class="hidden">
-      <div id="score"></div>
-      <div id="advice"></div>
     </div>
   </div>
 
-<script>
-  let questions = [];
-  let currentIndex = 0;
-  let answers = [];
+  <script>
+    let questions = [];
+    let answers = [];
+    let currentIndex = 0;
 
-  // ▼ GitHub Pages でも動く相対パス
-  fetch("questions/behavior.json")
-    .then((res) => {
-      if (!res.ok) throw new Error("JSON 読み込みエラー");
-      return res.json();
-    })
-    .then((data) => {
-      questions = data.questions;
-      answers = Array(questions.length).fill(null);
-      showQuestion(currentIndex);
-    })
-    .catch(() => {
-      alert("質問データ（behavior.json）が読み込めません。");
-    });
-
-  function showQuestion(index) {
-    const q = questions[index];
-    document.getElementById("question-text").textContent = q.text;
-
-    const optionsDiv = document.getElementById("options");
-    optionsDiv.innerHTML = "";
-
-    q.options.forEach((opt, i) => {
-      const div = document.createElement("div");
-      div.className = "option";
-
-      if (answers[index] === opt.score) {
-        div.classList.add("selected");
+    // 🔥 JSON 質問データをロード
+    async function loadQuestions() {
+      try {
+        const response = await fetch("/questions/behavior.json");
+        if (!response.ok) throw new Error("JSONが見つかりません");
+        questions = await response.json();
+        console.log("読み込み成功:", questions);
+        renderQuestion();
+      } catch (error) {
+        console.error(error);
+        document.getElementById("question-text").innerText =
+          "質問データ（behavior.json）が読み込めません。";
       }
-
-      div.textContent = opt.label;
-      div.onclick = () => {
-        answers[index] = opt.score;
-        showQuestion(index);
-      };
-      optionsDiv.appendChild(div);
-    });
-
-    document.getElementById("backBtn").style.visibility =
-      index === 0 ? "hidden" : "visible";
-
-    document.getElementById("nextBtn").textContent =
-      index === questions.length - 1 ? "診断する" : "次へ";
-  }
-
-  document.getElementById("nextBtn").onclick = () => {
-    if (answers[currentIndex] == null) {
-      alert("回答を選択してください");
-      return;
     }
 
-    if (currentIndex === questions.length - 1) {
-      showResult();
-      return;
+    // 🔥 質問の描画
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      document.getElementById("question-text").innerText =
+        `${currentIndex + 1}. ${q.question}`;
+
+      const optionsDiv = document.getElementById("options");
+      optionsDiv.innerHTML = "";
+
+      q.options.forEach((opt) => {
+        const btn = document.createElement("button");
+        btn.classList.add("option-btn");
+        btn.innerText = opt.text;
+
+        btn.onclick = () => {
+          answers[currentIndex] = opt.score;
+          document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          document.getElementById("next-btn").disabled = false;
+        };
+
+        optionsDiv.appendChild(btn);
+      });
+
+      document.getElementById("back-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled = answers[currentIndex] == null;
     }
 
-    currentIndex++;
-    showQuestion(currentIndex);
-  };
+    // 🔥 次へ
+    document.getElementById("next-btn").onclick = () => {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        // 最終 → 結果ページへ
+        const params = new URLSearchParams();
+        params.set("scores", JSON.stringify(answers));
 
-  document.getElementById("backBtn").onclick = () => {
-    if (currentIndex > 0) {
-      currentIndex--;
-      showQuestion(currentIndex);
-    }
-  };
+        window.location.href = `result.html?${params.toString()}`;
+      }
+    };
 
-  function showResult() {
-    const total = answers.reduce((a, b) => a + b, 0);
+    // 🔥 戻る
+    document.getElementById("back-btn").onclick = () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+      }
+    };
 
-    const resultPanel = document.getElementById("result");
-    const scoreDiv = document.getElementById("score");
-    const adviceDiv = document.getElementById("advice");
-
-    scoreDiv.textContent = `あなたのスコア：${total}点`;
-
-    let message = "";
-
-    if (total <= 10) {
-      message = "【低リスク】\n寒さ・頻尿の問題は軽度です。基本ケアで改善が期待できます。";
-    } else if (total <= 20) {
-      message = "【中リスク】\n冷え・夜間頻尿の傾向があります。生活習慣の調整が効果的です。";
-    } else if (total <= 28) {
-      message = "【高リスク】\n夜間頻尿と末梢冷えが強く関連しています。積極的なケアが必要です。";
-    } else {
-      message = "【非常に高リスク】\n足冷え・夜間頻尿の悪循環が疑われます。集中的な改善が必要です。";
-    }
-
-    adviceDiv.textContent = message;
-
-    document.getElementById("question-section").classList.add("hidden");
-    resultPanel.classList.remove("hidden");
-  }
-</script>
+    loadQuestions();
+  </script>
 </body>
 </html>
