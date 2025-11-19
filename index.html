@@ -85,6 +85,15 @@
       <button class="btn">改善プランを見る</button>
     </div>
   </div>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+      .then(() => console.log("Service Worker registered"))
+      .catch(err => console.log("SW fail:", err));
+    });
+  }
+</script>
 
 </body>
 </html>
