@@ -80,17 +80,21 @@ let answers = [];
 
 async function loadQuestions() {
     try {
-        // 🔥 重要：相対パスで読み込む（あなたの構造に合わせた最適解）
-        const response = await fetch("questions/behavior.json");
+        // 🔥 Vercel では絶対パスにするのが確実
+        const response = await fetch("/questions/behavior.json");
 
         if (!response.ok) throw new Error("HTTP " + response.status);
 
         questions = await response.json();
         showQuestion();
     } catch (e) {
-        document.getElementById("q-title").innerText = "質問データ（behavior.json）が読み込めません。";
-        console.error(e);
+        document.getElementById("q-title").innerText =
+            "質問データ（behavior.json）が読み込めません。";
+
+        console.error("質問ファイル読み込みエラー:", e);
     }
+}
+
 }
 
 function showQuestion() {
