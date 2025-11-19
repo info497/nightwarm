@@ -95,7 +95,7 @@
     // JSON の読み込み
     async function loadQuestions() {
       try {
-        const res = await fetch("behavior.json");
+        const res = await fetch("/questions/behavior.json");
         questions = await res.json();
         questions = questions.questions; // JSON の "questions" 配列を取り出す
         showQuestion();
