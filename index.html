@@ -1,99 +1,168 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>夜間頻尿 × 冷えケア診断</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NightWarm｜夜間頻尿 × 足の冷えチェック</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#0033cc">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles.css">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" href="./icons/icon-192.png">
+
+    <style>
+        /* シンプルな基本デザイン */
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f6f8fc;
+        }
+        .container {
+            max-width: 650px;
+            margin: auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #0033cc;
+        }
+        #question-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+            margin-top: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            margin: 10px 5px 0 0;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .next-btn { background: #0033cc; color: white; }
+        .back-btn { background: #ddd; }
+        .hidden { display: none; }
+    </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>夜間頻尿 × 冷えケア診断（12問）</h1>
+<div class="container">
 
-    <div id="question-container">
-      <p id="question-text">読み込み中...</p>
+    <h1>NightWarm</h1>
+    <p style="text-align:center;">睡眠中の「足の冷え」「夜間頻尿」をチェック</p>
 
-      <div id="options"></div>
+    <div id="question-box">
+        <h2 id="q-title">読み込み中...</h2>
 
-      <div class="nav-buttons">
-        <button id="back-btn" disabled>戻る</button>
-        <button id="next-btn" disabled>次へ</button>
-      </div>
+        <div id="choices"></div>
+
+        <button id="back-btn" class="btn back-btn hidden">戻る</button>
+        <button id="next-btn" class="btn next-btn hidden">次へ</button>
     </div>
-  </div>
 
-  <script>
-    let questions = [];
-    let answers = [];
-    let currentIndex = 0;
+</div>
 
-    // 🔥 JSON 質問データをロード
-    async function loadQuestions() {
-      try {
-        const response = await fetch("questions/behavior.json");
-        if (!response.ok) throw new Error("JSONが見つかりません");
+<script>
+let questions = [];
+let current = 0;
+let score = 0;
+let answers = [];
+
+async function loadQuestions() {
+    try {
+        // 🔥 重要：相対パスで読み込む（あなたの構造に合わせた最適解）
+        const response = await fetch("./questions/behavior.json");
+
+        if (!response.ok) throw new Error("HTTP " + response.status);
+
         questions = await response.json();
-        console.log("読み込み成功:", questions);
-        renderQuestion();
-      } catch (error) {
-        console.error(error);
-        document.getElementById("question-text").innerText =
-          "質問データ（behavior.json）が読み込めません。";
-      }
+        showQuestion();
+    } catch (e) {
+        document.getElementById("q-title").innerText = "質問データ（behavior.json）が読み込めません。";
+        console.error(e);
     }
+}
 
-    // 🔥 質問の描画
-    function renderQuestion() {
-      const q = questions[currentIndex];
-      document.getElementById("question-text").innerText =
-        `${currentIndex + 1}. ${q.question}`;
+function showQuestion() {
+    const q = questions[current];
 
-      const optionsDiv = document.getElementById("options");
-      optionsDiv.innerHTML = "";
+    document.getElementById("q-title").innerText = q.question;
 
-      q.options.forEach((opt) => {
+    const choicesDiv = document.getElementById("choices");
+    choicesDiv.innerHTML = "";
+
+    q.choices.forEach((choice, index) => {
         const btn = document.createElement("button");
-        btn.classList.add("option-btn");
-        btn.innerText = opt.text;
+        btn.className = "btn next-btn";
+        btn.style.width = "100%";
+        btn.style.marginTop = "10px";
+        btn.innerText = choice.label;
 
         btn.onclick = () => {
-          answers[currentIndex] = opt.score;
-          document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
-          btn.classList.add("selected");
-          document.getElementById("next-btn").disabled = false;
+            answers[current] = choice.value;
+            updateButtons();
         };
+        choicesDiv.appendChild(btn);
+    });
 
-        optionsDiv.appendChild(btn);
-      });
+    updateButtons();
+}
 
-      document.getElementById("back-btn").disabled = currentIndex === 0;
-      document.getElementById("next-btn").disabled = answers[currentIndex] == null;
-    }
+function updateButtons() {
+    const nextBtn = document.getElementById("next-btn");
+    const backBtn = document.getElementById("back-btn");
 
-    // 🔥 次へ
-    document.getElementById("next-btn").onclick = () => {
-      if (currentIndex < questions.length - 1) {
-        currentIndex++;
-        renderQuestion();
-      } else {
-        // 最終 → 結果ページへ
-        const params = new URLSearchParams();
-        params.set("scores", JSON.stringify(answers));
+    nextBtn.classList.remove("hidden");
+    backBtn.classList.toggle("hidden", current === 0);
 
-        window.location.href = `result.html?${params.toString()}`;
-      }
+    // 回答済みの時だけ「次へ」を押せる
+    nextBtn.disabled = answers[current] == null;
+
+    nextBtn.onclick = () => {
+        if (answers[current] == null) return;
+
+        if (current < questions.length - 1) {
+            current++;
+            showQuestion();
+        } else {
+            finish();
+        }
     };
 
-    // 🔥 戻る
-    document.getElementById("back-btn").onclick = () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        renderQuestion();
-      }
+    backBtn.onclick = () => {
+        if (current > 0) {
+            current--;
+            showQuestion();
+        }
+    };
+}
+
+function finish() {
+    score = answers.reduce((a, b) => a + b, 0);
+
+    // スコアと回答をresult.htmlに渡す
+    const data = {
+        score,
+        answers
     };
 
-    loadQuestions();
-  </script>
+    localStorage.setItem("nightwarm_result", JSON.stringify(data));
+    window.location.href = "./result.html";
+}
+
+// 初期読み込み
+loadQuestions();
+</script>
+
 </body>
 </html>
