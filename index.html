@@ -125,5 +125,91 @@
     });
   </script>
 
+  <script>
+  // -------------------------
+  // 足の冷えチェック用の質問
+  // -------------------------
+  const questions = [
+    {
+      q: "夜中に足が冷えて目が覚めることはありますか？",
+      key: "coldNight"
+    },
+    {
+      q: "靴下を履いて寝ていますか？",
+      key: "socks"
+    },
+    {
+      q: "寝る前に足が冷たいと感じますか？",
+      key: "coldBeforeSleep"
+    },
+    {
+      q: "日中にも足先が冷えることが多いですか？",
+      key: "dayCold"
+    }
+  ];
+
+  // 回答を保存
+  let answers = {};
+  let step = 0;
+
+  // 初期表示
+  function loadQuestion() {
+    document.getElementById("flowQuestion").textContent = questions[step].q;
+  }
+  loadQuestion();
+
+  // 回答処理
+  function answerFlow(val) {
+    const key = questions[step].key;
+    answers[key] = val;
+
+    step++;
+
+    // 最後まで行ったら結果生成
+    if (step >= questions.length) {
+      showResult();
+    } else {
+      loadQuestion();
+    }
+  }
+
+  // -------------------------
+  // 結果生成ロジック
+  // -------------------------
+  function showResult() {
+    document.getElementById("flowBox").style.display = "none";
+
+    let msg = "";
+
+    const yesCount = Object.values(answers).filter(v => v === "yes").length;
+
+    if (yesCount >= 3) {
+      msg = `
+        【結果】強い冷え性傾向があります。<br><br>
+        ● 足湯（10分）が最も効果的<br>
+        ● 靴下は「薄い綿素材」に変更推奨<br>
+        ● 足先の血流低下の可能性 → 温度管理を強化<br>
+        ● 夜間頻尿との関連も強い傾向
+      `;
+    } else if (yesCount === 2) {
+      msg = `
+        【結果】軽度の冷え傾向があります。<br><br>
+        ● 入眠前の足の温め（温タオル or 足首ストレッチ）で改善可能<br>
+        ● 布団内温度が低い可能性あり
+      `;
+    } else {
+      msg = `
+        【結果】足の冷えは強くなさそうです。<br><br>
+        ● 夜間頻尿が主原因の可能性あり<br>
+        ● 水分摂取リズム・カフェイン・室温をチェック
+      `;
+    }
+
+    const resultBox = document.getElementById("flowResult");
+    resultBox.innerHTML = msg;
+    resultBox.style.display = "block";
+  }
+</script>
+
 </body>
 </html>
