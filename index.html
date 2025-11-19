@@ -130,6 +130,36 @@
     </div>
 
     <script>
+
+        function loadReport(score) {
+  fetch("/questions/report.json")
+    .then(response => response.json())
+    .then(data => {
+      const reports = data.reports;
+
+      // スコアに該当するレポートを検索
+      const report = reports.find(r => {
+        const [min, max] = r.range.split("-").map(Number);
+        return score >= min && score <= max;
+      });
+
+      showReport(report);
+    });
+}
+
+function showReport(report) {
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerHTML = `
+    <h2>${report.title}</h2>
+    <p>${report.message}</p>
+    <h3>おすすめ対策</h3>
+    <ul>
+      ${report.advice.map(a => `<li>${a}</li>`).join("")}
+    </ul>
+  `;
+}
+
+        
         let questions = [];
         let current = 0;
         let answers = [];
@@ -238,35 +268,6 @@
         // 初期ロード
         loadQuestions();
     </script>
-
-
-    function loadReport(score) {
-  fetch("/questions/report.json")
-    .then(response => response.json())
-    .then(data => {
-      const reports = data.reports;
-
-      // スコアに該当するレポートを検索
-      const report = reports.find(r => {
-        const [min, max] = r.range.split("-").map(Number);
-        return score >= min && score <= max;
-      });
-
-      showReport(report);
-    });
-}
-
-function showReport(report) {
-  const resultDiv = document.getElementById("result");
-  resultDiv.innerHTML = `
-    <h2>${report.title}</h2>
-    <p>${report.message}</p>
-    <h3>おすすめ対策</h3>
-    <ul>
-      ${report.advice.map(a => `<li>${a}</li>`).join("")}
-    </ul>
-  `;
-}
 
 </body>
 </html>
