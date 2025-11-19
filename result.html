@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NightWarm｜診断結果</title>
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f1f5ff;
+      color: #333;
+    }
+
+    header {
+      background: #0033cc;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .level {
+      font-size: 18px;
+      font-weight: bold;
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: inline-block;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .level-1 { background: #4caf50; }
+    .level-2 { background: #ff9800; }
+    .level-3 { background: #f44336; }
+    .level-4 { background: #880e4f; }
+
+    ul {
+      margin-top: 8px;
+      padding-left: 20px;
+    }
+
+    .back-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 14px;
+      margin-top: 20px;
+      background: #0033cc;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+
+    .score-box {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #0033cc;
+    }
+  </style>
+</head>
+
+<body>
+  <header>NightWarm｜診断結果</header>
+
+  <div class="container">
+    <div id="result-card" class="card">
+      <!-- JS がここに結果を挿入する -->
+    </div>
+
+    <a href="index.html" class="back-btn">もう一度診断する</a>
+  </div>
+
+  <script>
+    // index.html から ?score=20 のように来る
+    const params = new URLSearchParams(window.location.search);
+    const score = Number(params.get("score")) || 0;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadReport(score);
+    });
+
+    function loadReport(score) {
+      fetch("/questions/report.json")
+        .then(res => res.json())
+        .then(data => {
+          const report = findReport(score, data.reports);
+          renderReport(score, report);
+        })
+        .catch(err => {
+          document.getElementById("result-card").innerHTML =
+            "<p>レポートの読み込みに失敗しました。</p>";
+        });
+    }
+
+    function findReport(score, reports) {
+      return reports.find(r => {
+        const [min, max] = r.range.split("-").map(Number);
+        return score >= min && score <= max;
+      });
+    }
+
+    function renderReport(score, report) {
+      const card = document.getElementById("result-card");
+
+      card.innerHTML = `
+        <div class="score-box">総合スコア：${score} 点</div>
+        <span class="level level-${report.level}">${report.title}</span>
+        <p>${report.message}</p>
+
+        <h3>おすすめ対策</h3>
+        <ul>
+          ${report.advice.map(a => `<li>${a}</li>`).join("")}
+        </ul>
+      `;
+    }
+  </script>
+</body>
+</html>
