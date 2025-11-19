@@ -1,98 +1,110 @@
-<body>
- <head>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-  <!-- ページのタイトル -->
   <title>NightWarm</title>
-
-  <!-- 説明文（SEO） -->
   <meta name="description" content="NightWarm - 夜のリラックスと快適な睡眠のための温熱サポートツール。" />
 
-  <!-- PWA：テーマカラー -->
   <meta name="theme-color" content="#0033cc" />
 
   <!-- PWA manifest -->
   <link rel="manifest" href="/manifest.json" />
 
-  <!-- PWA 用アイコン -->
+  <!-- Icons -->
   <link rel="apple-touch-icon" href="/icons/icon-192.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png" />
 
-  <!-- iPhoneのSafari用：ステータスバー -->
+  <!-- iOS Safari -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <!-- CSS（必要なら） -->
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- Google Fonts（UI改善のため推奨） -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
 
-  <!-- Favicon（任意） -->
-  <link rel="icon" href="/icons/icon-192.png" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f8ff;
+      color: #222;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-weight: 600;
+      font-size: 2rem;
+      color: #0033cc;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-weight: 300;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .icon-preview {
+      width: 120px;
+      height: 120px;
+      margin: 1.5rem auto;
+    }
+
+    .btn {
+      background: #0033cc;
+      color: #fff;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.85;
+    }
+
+    #installBtn {
+      display: none;
+      margin-top: 20px;
+    }
+  </style>
 </head>
-  <div class="app-container">
 
-    <!-- アプリ上部のヘッダー -->
-    <header class="header">
-      <img src="/icons/icon-192.png" class="logo">
-      <h1 class="title">NightWarm</h1>
-      <p class="subtitle">睡眠中の「足の冷え」「夜間頻尿」を減らすガイド</p>
-    </header>
+<body>
+  <h1>NightWarm</h1>
+  <p>夜のリラックスと快適な睡眠のための温熱サポートツール</p>
 
-    <!-- メインボタン（大きく押しやすい） -->
-    <div class="menu-buttons">
-      <button class="btn-primary" onclick="location.href='#check'">
-        🦶 寝る前チェック
-      </button>
+  <!-- アイコンプレビュー -->
+  <img src="/icons/icon-192.png" alt="app icon" class="icon-preview" />
 
-      <button class="btn-secondary" onclick="location.href='#warm'">
-        ♨ 足を温める方法
-      </button>
+  <!-- インストールボタン -->
+  <button id="installBtn" class="btn">NightWarm をインストール</button>
 
-      <button class="btn-secondary" onclick="location.href='#toilet'">
-        🚻 夜間頻尿セルフ対策
-      </button>
-    </div>
-
-    <!-- セクション1：寝る前チェック -->
-    <section id="check" class="section">
-      <h2>🦶 寝る前チェック</h2>
-
-      <div class="card">
-        <h3>足は冷たくない？</h3>
-        <p>入眠20分前の足の温度が重要です。</p>
-        <button class="btn-small">チェックする</button>
-      </div>
-
-      <div class="card">
-        <h3>水分はどのくらい？</h3>
-        <p>寝る2時間前の水分は排尿に影響します。</p>
-        <button class="btn-small">チェックする</button>
-      </div>
-
-      <div class="card">
-        <h3>むくみはある？</h3>
-        <p>むくみがあると夜間尿が増えます。</p>
-        <button class="btn-small">チェックする</button>
-      </div>
-    </section>
-
-  </div>
   <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-      .then(() => console.log("Service Worker registered"))
-      .catch(err => console.log("SW fail:", err));
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBtn').style.display = 'inline-block';
     });
-  }
-</script>
+
+    document.getElementById('installBtn').addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const result = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        document.getElementById('installBtn').style.display = 'none';
+      }
+    });
+  </script>
 </body>
+</html>
