@@ -1,99 +1,73 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>夜間頻尿 × 冷えケア診断</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>診断レポート</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
   <div class="container">
-    <h1>夜間頻尿 × 冷えケア診断（12問）</h1>
+    <h1>診断レポート</h1>
 
-    <div id="question-container">
-      <p id="question-text">読み込み中...</p>
+    <p id="score-text">計算中...</p>
+    <div id="report-container">結果を読み込み中...</div>
 
-      <div id="options"></div>
-
-      <div class="nav-buttons">
-        <button id="back-btn" disabled>戻る</button>
-        <button id="next-btn" disabled>次へ</button>
-      </div>
-    </div>
+    <button onclick="window.location.href='index.html'" class="restart-btn">
+      もう一度診断する
+    </button>
   </div>
 
   <script>
-    let questions = [];
-    let answers = [];
-    let currentIndex = 0;
+    async function loadReport() {
+      // 📌 index.html から scores を取得
+      const params = new URLSearchParams(window.location.search);
+      const scores = JSON.parse(params.get("scores") || "[]");
 
-    // 🔥 JSON 質問データをロード
-    async function loadQuestions() {
+      const total = scores.reduce((a, b) => a + b, 0);
+
+      document.getElementById("score-text").innerText =
+        `あなたのスコア：${total}点（0〜36点）`;
+
+      // 📌 レポート JSON 読み込み
+      let reportData = {};
       try {
-        const response = await fetch("questions/behavior.json");
-        if (!response.ok) throw new Error("JSONが見つかりません");
-        questions = await response.json();
-        console.log("読み込み成功:", questions);
-        renderQuestion();
-      } catch (error) {
-        console.error(error);
-        document.getElementById("question-text").innerText =
-          "質問データ（behavior.json）が読み込めません。";
+        const response = await fetch("/questions/report.json");
+        if (!response.ok) throw new Error("report.json が見つかりません");
+        reportData = await response.json();
+      } catch (e) {
+        document.getElementById("report-container").innerText =
+          "レポートデータが読み込めません。";
+        return;
       }
-    }
 
-    // 🔥 質問の描画
-    function renderQuestion() {
-      const q = questions[currentIndex];
-      document.getElementById("question-text").innerText =
-        `${currentIndex + 1}. ${q.question}`;
-
-      const optionsDiv = document.getElementById("options");
-      optionsDiv.innerHTML = "";
-
-      q.options.forEach((opt) => {
-        const btn = document.createElement("button");
-        btn.classList.add("option-btn");
-        btn.innerText = opt.text;
-
-        btn.onclick = () => {
-          answers[currentIndex] = opt.score;
-          document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
-          btn.classList.add("selected");
-          document.getElementById("next-btn").disabled = false;
-        };
-
-        optionsDiv.appendChild(btn);
-      });
-
-      document.getElementById("back-btn").disabled = currentIndex === 0;
-      document.getElementById("next-btn").disabled = answers[currentIndex] == null;
-    }
-
-    // 🔥 次へ
-    document.getElementById("next-btn").onclick = () => {
-      if (currentIndex < questions.length - 1) {
-        currentIndex++;
-        renderQuestion();
+      // 📌 スコアに応じて分類
+      let report = "";
+      if (total <= 12) {
+        report = reportData.low;
+      } else if (total <= 24) {
+        report = reportData.mid;
       } else {
-        // 最終 → 結果ページへ
-        const params = new URLSearchParams();
-        params.set("scores", JSON.stringify(answers));
-
-        window.location.href = `result.html?${params.toString()}`;
+        report = reportData.high;
       }
-    };
 
-    // 🔥 戻る
-    document.getElementById("back-btn").onclick = () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        renderQuestion();
-      }
-    };
+      // 📌 HTMLに反映
+      document.getElementById("report-container").innerHTML = `
+        <h2>${report.title}</h2>
+        <p>${report.desc}</p>
 
-    loadQuestions();
+        <h3>おすすめアクション</h3>
+        <ul>
+          ${report.actions.map(a => `<li>${a}</li>`).join("")}
+        </ul>
+
+        <h3>解説</h3>
+        <p>${report.detail}</p>
+      `;
+    }
+
+    loadReport();
   </script>
 </body>
 </html>
