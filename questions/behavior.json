@@ -1,124 +1,110 @@
-{
-  "questions": [
-    {
-      "id": 1,
-      "text": "夜中にトイレへ起きる回数はどれくらいですか？",
-      "answers": [
-        { "text": "0回", "score": 0 },
-        { "text": "1回", "score": 1 },
-        { "text": "2回", "score": 2 },
-        { "text": "3回以上", "score": 3 }
-      ]
-    },
-    {
-      "id": 2,
-      "text": "就寝前の足の冷えを感じますか？",
-      "answers": [
-        { "text": "全くない", "score": 0 },
-        { "text": "少しある", "score": 1 },
-        { "text": "よくある", "score": 2 },
-        { "text": "いつも冷たい", "score": 3 }
-      ]
-    },
-    {
-      "id": 3,
-      "text": "布団に入ってから眠りにつくまでの時間は？",
-      "answers": [
-        { "text": "すぐ眠れる", "score": 0 },
-        { "text": "10〜30分", "score": 1 },
-        { "text": "30分〜1時間", "score": 2 },
-        { "text": "1時間以上", "score": 3 }
-      ]
-    },
-    {
-      "id": 4,
-      "text": "寝る前に足を温める（湯たんぽ、温タオルなど）習慣は？",
-      "answers": [
-        { "text": "必ず行う", "score": 0 },
-        { "text": "時々行う", "score": 1 },
-        { "text": "ほとんど行わない", "score": 2 },
-        { "text": "全く行わない", "score": 3 }
-      ]
-    },
-    {
-      "id": 5,
-      "text": "日中の水分摂取量は？",
-      "answers": [
-        { "text": "十分（1〜1.5L以上）", "score": 0 },
-        { "text": "やや少ない（800ml〜1L）", "score": 1 },
-        { "text": "かなり少ない（〜800ml）", "score": 2 },
-        { "text": "ほとんど飲まない", "score": 3 }
-      ]
-    },
-    {
-      "id": 6,
-      "text": "カフェイン（コーヒー・緑茶）を夕方以降に摂りますか？",
-      "answers": [
-        { "text": "飲まない", "score": 0 },
-        { "text": "時々飲む", "score": 1 },
-        { "text": "よく飲む", "score": 2 },
-        { "text": "ほぼ毎日飲む", "score": 3 }
-      ]
-    },
-    {
-      "id": 7,
-      "text": "足のむくみがありますか？",
-      "answers": [
-        { "text": "全くない", "score": 0 },
-        { "text": "時々ある", "score": 1 },
-        { "text": "よくある", "score": 2 },
-        { "text": "毎日むくむ", "score": 3 }
-      ]
-    },
-    {
-      "id": 8,
-      "text": "運動習慣は？（歩行・体操含む）",
-      "answers": [
-        { "text": "毎日している", "score": 0 },
-        { "text": "週に2〜3回", "score": 1 },
-        { "text": "週1程度", "score": 2 },
-        { "text": "ほとんどしない", "score": 3 }
-      ]
-    },
-    {
-      "id": 9,
-      "text": "就寝前にスマホやTVを長時間見ますか？",
-      "answers": [
-        { "text": "見ない", "score": 0 },
-        { "text": "少し見る", "score": 1 },
-        { "text": "よく見る", "score": 2 },
-        { "text": "毎日長時間見る", "score": 3 }
-      ]
-    },
-    {
-      "id": 10,
-      "text": "入浴（湯船）には入っていますか？",
-      "answers": [
-        { "text": "毎日入る", "score": 0 },
-        { "text": "週3〜5回", "score": 1 },
-        { "text": "週1〜2回", "score": 2 },
-        { "text": "ほとんど入らない", "score": 3 }
-      ]
-    },
-    {
-      "id": 11,
-      "text": "寝る前にトイレへ行く習慣はありますか？",
-      "answers": [
-        { "text": "必ず行く", "score": 0 },
-        { "text": "時々行く", "score": 1 },
-        { "text": "あまり行かない", "score": 2 },
-        { "text": "全く行かない", "score": 3 }
-      ]
-    },
-    {
-      "id": 12,
-      "text": "夜中に身体の冷え・寒さで目が覚めることがありますか？",
-      "answers": [
-        { "text": "全くない", "score": 0 },
-        { "text": "時々ある", "score": 1 },
-        { "text": "よくある", "score": 2 },
-        { "text": "ほぼ毎日ある", "score": 3 }
-      ]
-    }
-  ]
-}
+[
+  {
+    "question": "夜中にトイレへ起きる回数はどれくらいですか？",
+    "choices": [
+      { "label": "0回", "value": 0 },
+      { "label": "1回", "value": 1 },
+      { "label": "2回", "value": 2 },
+      { "label": "3回以上", "value": 3 }
+    ]
+  },
+  {
+    "question": "就寝前の足の冷えを感じますか？",
+    "choices": [
+      { "label": "全くない", "value": 0 },
+      { "label": "少しある", "value": 1 },
+      { "label": "よくある", "value": 2 },
+      { "label": "いつも冷たい", "value": 3 }
+    ]
+  },
+  {
+    "question": "布団に入ってから眠りにつくまでの時間は？",
+    "choices": [
+      { "label": "すぐ眠れる", "value": 0 },
+      { "label": "10〜30分", "value": 1 },
+      { "label": "30分〜1時間", "value": 2 },
+      { "label": "1時間以上", "value": 3 }
+    ]
+  },
+  {
+    "question": "寝る前に足を温める（湯たんぽ、温タオルなど）習慣は？",
+    "choices": [
+      { "label": "必ず行う", "value": 0 },
+      { "label": "時々行う", "value": 1 },
+      { "label": "ほとんど行わない", "value": 2 },
+      { "label": "全く行わない", "value": 3 }
+    ]
+  },
+  {
+    "question": "日中の水分摂取量は？",
+    "choices": [
+      { "label": "十分（1〜1.5L以上）", "value": 0 },
+      { "label": "やや少ない（800ml〜1L）", "value": 1 },
+      { "label": "かなり少ない（〜800ml）", "value": 2 },
+      { "label": "ほとんど飲まない", "value": 3 }
+    ]
+  },
+  {
+    "question": "カフェイン（コーヒー・緑茶）を夕方以降に摂りますか？",
+    "choices": [
+      { "label": "飲まない", "value": 0 },
+      { "label": "時々飲む", "value": 1 },
+      { "label": "よく飲む", "value": 2 },
+      { "label": "ほぼ毎日飲む", "value": 3 }
+    ]
+  },
+  {
+    "question": "足のむくみがありますか？",
+    "choices": [
+      { "label": "全くない", "value": 0 },
+      { "label": "時々ある", "value": 1 },
+      { "label": "よくある", "value": 2 },
+      { "label": "毎日むくむ", "value": 3 }
+    ]
+  },
+  {
+    "question": "運動習慣は？（歩行・体操含む）",
+    "choices": [
+      { "label": "毎日している", "value": 0 },
+      { "label": "週に2〜3回", "value": 1 },
+      { "label": "週1程度", "value": 2 },
+      { "label": "ほとんどしない", "value": 3 }
+    ]
+  },
+  {
+    "question": "就寝前にスマホやTVを長時間見ますか？",
+    "choices": [
+      { "label": "見ない", "value": 0 },
+      { "label": "少し見る", "value": 1 },
+      { "label": "よく見る", "value": 2 },
+      { "label": "毎日長時間見る", "value": 3 }
+    ]
+  },
+  {
+    "question": "入浴（湯船）には入っていますか？",
+    "choices": [
+      { "label": "毎日入る", "value": 0 },
+      { "label": "週3〜5回", "value": 1 },
+      { "label": "週1〜2回", "value": 2 },
+      { "label": "ほとんど入らない", "value": 3 }
+    ]
+  },
+  {
+    "question": "寝る前にトイレへ行く習慣はありますか？",
+    "choices": [
+      { "label": "必ず行く", "value": 0 },
+      { "label": "時々行く", "value": 1 },
+      { "label": "あまり行かない", "value": 2 },
+      { "label": "全く行かない", "value": 3 }
+    ]
+  },
+  {
+    "question": "夜中に身体の冷え・寒さで目が覚めることがありますか？",
+    "choices": [
+      { "label": "全くない", "value": 0 },
+      { "label": "時々ある", "value": 1 },
+      { "label": "よくある", "value": 2 },
+      { "label": "ほぼ毎日ある", "value": 3 }
+    ]
+  }
+]
