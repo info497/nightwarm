@@ -168,19 +168,5 @@ loadQuestions();
 </script>
 
 
-    <script>
-(async () => {
-  try {
-    const r = await fetch("/questions/behavior.json");
-    const t = await r.text();
-    console.log("FETCH OK", t.substring(0, 100));
-    document.body.insertAdjacentHTML("beforeend", "<p>FETCH OK</p>");
-  } catch (e) {
-    console.error("FETCH ERROR", e);
-    document.body.insertAdjacentHTML("beforeend", "<p>FETCH ERROR</p>");
-  }
-})();
-</script>
-
 </body>
 </html>
