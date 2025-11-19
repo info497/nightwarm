@@ -1,161 +1,242 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NightWarm 冷えチェック</title>
 
-  <title>NightWarm</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(180deg, #2b2e3a, #1e2028);
+            color: #fff;
+        }
 
-  <!-- PWA -->
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#0033cc" />
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-  <!-- スタイル -->
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f5f8ff;
-      margin: 0;
-      padding: 20px;
-      color: #333;
-    }
-    .container {
-      max-width: 420px;
-      margin: auto;
-      padding: 20px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #0033cc;
-    }
-    .question {
-      font-size: 1.1em;
-      margin-bottom: 16px;
-    }
-    .option-btn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      background: #e8eeff;
-      color: #0033cc;
-      text-align: center;
-      border-radius: 10px;
-      border: none;
-      font-size: 1em;
-      cursor: pointer;
-    }
-    .option-btn:hover {
-      background: #d6e1ff;
-    }
-    #result {
-      display: none;
-      text-align: center;
-      margin-top: 20px;
-    }
-    #restart {
-      margin-top: 20px;
-      padding: 12px;
-      width: 100%;
-      background: #0033cc;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1em;
-      cursor: pointer;
-    }
-  </style>
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 14px;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .options {
+            margin-top: 10px;
+        }
+
+        .option {
+            background: rgba(255,255,255,0.15);
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .option:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .option.selected {
+            background: #ffb74d;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 18px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        #prevBtn {
+            background: #777;
+        }
+
+        #nextBtn {
+            background: #ff9800;
+            color: #000;
+        }
+
+        #resultScreen {
+            display: none;
+            text-align: center;
+        }
+
+        #scoreResult {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>NightWarm</h1>
+    <div class="container">
+        <h1>NightWarm 冷えチェック</h1>
 
-    <div id="quiz">
-      <p id="question" class="question">読み込み中...</p>
-      <div id="options"></div>
+        <!-- 質問カード -->
+        <div class="card" id="questionCard">
+            <div id="questionText" class="question"></div>
+            <div id="optionsContainer" class="options"></div>
+
+            <div class="nav-buttons">
+                <button id="prevBtn">＜ 戻る</button>
+                <button id="nextBtn">次へ ＞</button>
+            </div>
+        </div>
+
+        <!-- 結果表示画面 -->
+        <div id="resultScreen" class="card">
+            <h2>診断結果</h2>
+            <div id="scoreResult"></div>
+            <button onclick="restart()" style="margin-top:20px;background:#ff9800;color:#000;">
+                もう一度チェックする
+            </button>
+        </div>
     </div>
 
-    <div id="result">
-      <h2>結果</h2>
-      <p id="summary"></p>
-      <button id="restart">もう一度やる</button>
-    </div>
-  </div>
+    <script>
+        let questions = [];
+        let current = 0;
+        let answers = [];
 
-  <!-- 質問フロー機能 -->
-  <script>
-    let questions = [];
-    let currentIndex = 0;
-    let answers = [];
+        // JSON 読み込み
+        async function loadQuestions() {
+            try {
+                const res = await fetch("/questions/behavior.json");
 
-    // JSON の読み込み
-    async function loadQuestions() {
-      try {
-        const res = await fetch("/questions/behavior.json");
-        questions = await res.json();
-        questions = questions.questions; // JSON の "questions" 配列を取り出す
-        showQuestion();
-      } catch (e) {
-        document.getElementById("question").innerText =
-          "質問データ（behavior.json）が読み込めません。";
-      }
-    }
+                if (!res.ok) {
+                    throw new Error("behavior.json が読み込めませんでした");
+                }
 
-    // 質問表示
-    function showQuestion() {
-      const q = questions[currentIndex];
-      document.getElementById("question").innerText = 
-        `Q${currentIndex + 1}. ${q.text}`;
+                questions = await res.json();
+                renderQuestion();
+            } catch (e) {
+                document.getElementById("questionText").innerText =
+                    "質問データ（behavior.json）が読み込めません。";
+                console.error(e);
+            }
+        }
 
-      const optionsDiv = document.getElementById("options");
-      optionsDiv.innerHTML = "";
+        // 質問を画面に反映
+        function renderQuestion() {
+            const q = questions[current];
 
-      q.options.forEach((opt, idx) => {
-        const btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.innerText = opt;
+            document.getElementById("questionText").innerText = (current + 1) + ". " + q.question;
 
-        btn.onclick = () => {
-          answers.push({ id: q.id, answer: opt });
-          currentIndex++;
-          if (currentIndex < questions.length) {
-            showQuestion();
-          } else {
-            showResult();
-          }
+            const optContainer = document.getElementById("optionsContainer");
+            optContainer.innerHTML = "";
+
+            q.options.forEach((opt, index) => {
+                const div = document.createElement("div");
+                div.className = "option";
+                div.innerText = opt.label;
+
+                if (answers[current] === index) {
+                    div.classList.add("selected");
+                }
+
+                div.onclick = () => {
+                    answers[current] = index;
+                    renderQuestion();
+                };
+
+                optContainer.appendChild(div);
+            });
+
+            // 戻るボタン制御
+            document.getElementById("prevBtn").style.visibility =
+                current === 0 ? "hidden" : "visible";
+
+            // 最後だけ「診断へ」
+            document.getElementById("nextBtn").innerText =
+                current === questions.length - 1 ? "診断する" : "次へ ＞";
+        }
+
+        // 次へ
+        document.getElementById("nextBtn").onclick = () => {
+            if (answers[current] == null) {
+                alert("回答を選んでください");
+                return;
+            }
+
+            // 最後の質問だったら診断へ
+            if (current === questions.length - 1) {
+                showResult();
+                return;
+            }
+
+            current++;
+            renderQuestion();
         };
-        optionsDiv.appendChild(btn);
-      });
-    }
 
-    // 結果表示
-    function showResult() {
-      document.getElementById("quiz").style.display = "none";
-      document.getElementById("result").style.display = "block";
+        // 戻る
+        document.getElementById("prevBtn").onclick = () => {
+            if (current > 0) {
+                current--;
+                renderQuestion();
+            }
+        };
 
-      let summaryText = "回答ありがとうございました！<br><br>";
+        // 結果計算
+        function showResult() {
+            let score = 0;
 
-      answers.forEach(a => {
-        summaryText += `Q${a.id}: ${a.answer}<br>`;
-      });
+            answers.forEach((ans, i) => {
+                score += questions[i].options[ans].score;
+            });
 
-      document.getElementById("summary").innerHTML = summaryText;
+            document.getElementById("questionCard").style.display = "none";
+            document.getElementById("resultScreen").style.display = "block";
 
-      document.getElementById("restart").onclick = () => {
-        currentIndex = 0;
-        answers = [];
-        document.getElementById("quiz").style.display = "block";
-        document.getElementById("result").style.display = "none";
-        showQuestion();
-      };
-    }
+            document.getElementById("scoreResult").innerText =
+                "あなたの冷えスコアは「" + score + " 点」です。";
+        }
 
-    // 初期化
-    loadQuestions();
-  </script>
+        function restart() {
+            current = 0;
+            answers = [];
+            document.getElementById("resultScreen").style.display = "none";
+            document.getElementById("questionCard").style.display = "block";
+            renderQuestion();
+        }
+
+        // 初期ロード
+        loadQuestions();
+    </script>
 </body>
 </html>
