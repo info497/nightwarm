@@ -1,99 +1,50 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NightWarm</title>
-<link rel="manifest" href="/manifest.json">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #0B1D39;
-      font-family: "Segoe UI", sans-serif;
-      color: #fff;
-    }
-
-    header {
-      text-align: center;
-      padding: 30px 0 10px;
-    }
-
-    .logo {
-      font-size: 32px;
-      font-weight: bold;
-      color: #A8C8FF;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      color: #A8C8FF;
-      opacity: 0.8;
-    }
-
-    .container {
-      max-width: 500px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-
-    .card {
-      background: #ffffff;
-      color: #0B1D39;
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.25);
-    }
-
-    .card h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .btn {
-      background: #3D74C0;
-      color: white;
-      width: 100%;
-      padding: 15px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .btn:hover {
-      opacity: 0.85;
-    }
-
-  </style>
-</head>
-
 <body>
+  <div class="app-container">
 
-  <header>
-    <div class="logo">🌙 NightWarm</div>
-    <div class="subtitle">夜間の冷え × 頻尿をやさしくサポート</div>
-  </header>
+    <!-- アプリ上部のヘッダー -->
+    <header class="header">
+      <img src="/icons/icon-192.png" class="logo">
+      <h1 class="title">NightWarm</h1>
+      <p class="subtitle">睡眠中の「足の冷え」「夜間頻尿」を減らすガイド</p>
+    </header>
 
-  <div class="container">
-    <div class="card">
-      <h2>メニュー</h2>
-      <button class="btn">足の冷えチェック</button>
-      <button class="btn">夜間頻尿リスク診断</button>
-      <button class="btn">改善プランを見る</button>
+    <!-- メインボタン（大きく押しやすい） -->
+    <div class="menu-buttons">
+      <button class="btn-primary" onclick="location.href='#check'">
+        🦶 寝る前チェック
+      </button>
+
+      <button class="btn-secondary" onclick="location.href='#warm'">
+        ♨ 足を温める方法
+      </button>
+
+      <button class="btn-secondary" onclick="location.href='#toilet'">
+        🚻 夜間頻尿セルフ対策
+      </button>
     </div>
-  </div>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-      .then(() => console.log("Service Worker registered"))
-      .catch(err => console.log("SW fail:", err));
-    });
-  }
-</script>
 
+    <!-- セクション1：寝る前チェック -->
+    <section id="check" class="section">
+      <h2>🦶 寝る前チェック</h2>
+
+      <div class="card">
+        <h3>足は冷たくない？</h3>
+        <p>入眠20分前の足の温度が重要です。</p>
+        <button class="btn-small">チェックする</button>
+      </div>
+
+      <div class="card">
+        <h3>水分はどのくらい？</h3>
+        <p>寝る2時間前の水分は排尿に影響します。</p>
+        <button class="btn-small">チェックする</button>
+      </div>
+
+      <div class="card">
+        <h3>むくみはある？</h3>
+        <p>むくみがあると夜間尿が増えます。</p>
+        <button class="btn-small">チェックする</button>
+      </div>
+    </section>
+
+  </div>
 </body>
-</html>
