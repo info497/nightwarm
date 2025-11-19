@@ -1,139 +1,73 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NightWarm｜診断結果</title>
-
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f1f5ff;
-      color: #333;
-    }
-
-    header {
-      background: #0033cc;
-      color: white;
-      padding: 16px;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .container {
-      max-width: 700px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-    }
-
-    .level {
-      font-size: 18px;
-      font-weight: bold;
-      padding: 8px 12px;
-      border-radius: 8px;
-      display: inline-block;
-      color: white;
-      margin-bottom: 12px;
-    }
-
-    .level-1 { background: #4caf50; }
-    .level-2 { background: #ff9800; }
-    .level-3 { background: #f44336; }
-    .level-4 { background: #880e4f; }
-
-    ul {
-      margin-top: 8px;
-      padding-left: 20px;
-    }
-
-    .back-btn {
-      display: block;
-      width: 100%;
-      text-align: center;
-      padding: 14px;
-      margin-top: 20px;
-      background: #0033cc;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 18px;
-    }
-
-    .score-box {
-      font-size: 24px;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 20px;
-      color: #0033cc;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>診断レポート</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <header>NightWarm｜診断結果</header>
-
   <div class="container">
-    <div id="result-card" class="card">
-      <!-- JS がここに結果を挿入する -->
-    </div>
+    <h1>診断レポート</h1>
 
-    <a href="index.html" class="back-btn">もう一度診断する</a>
+    <p id="score-text">計算中...</p>
+    <div id="report-container">結果を読み込み中...</div>
+
+    <button onclick="window.location.href='index.html'" class="restart-btn">
+      もう一度診断する
+    </button>
   </div>
 
   <script>
-    // index.html から ?score=20 のように来る
-    const params = new URLSearchParams(window.location.search);
-    const score = Number(params.get("score")) || 0;
+    async function loadReport() {
+      // 📌 index.html から scores を取得
+      const params = new URLSearchParams(window.location.search);
+      const scores = JSON.parse(params.get("scores") || "[]");
 
-    document.addEventListener("DOMContentLoaded", () => {
-      loadReport(score);
-    });
+      const total = scores.reduce((a, b) => a + b, 0);
 
-    function loadReport(score) {
-      fetch("/questions/report.json")
-        .then(res => res.json())
-        .then(data => {
-          const report = findReport(score, data.reports);
-          renderReport(score, report);
-        })
-        .catch(err => {
-          document.getElementById("result-card").innerHTML =
-            "<p>レポートの読み込みに失敗しました。</p>";
-        });
-    }
+      document.getElementById("score-text").innerText =
+        `あなたのスコア：${total}点（0〜36点）`;
 
-    function findReport(score, reports) {
-      return reports.find(r => {
-        const [min, max] = r.range.split("-").map(Number);
-        return score >= min && score <= max;
-      });
-    }
+      // 📌 レポート JSON 読み込み
+      let reportData = {};
+      try {
+        const response = await fetch("/questions/report.json");
+        if (!response.ok) throw new Error("report.json が見つかりません");
+        reportData = await response.json();
+      } catch (e) {
+        document.getElementById("report-container").innerText =
+          "レポートデータが読み込めません。";
+        return;
+      }
 
-    function renderReport(score, report) {
-      const card = document.getElementById("result-card");
+      // 📌 スコアに応じて分類
+      let report = "";
+      if (total <= 12) {
+        report = reportData.low;
+      } else if (total <= 24) {
+        report = reportData.mid;
+      } else {
+        report = reportData.high;
+      }
 
-      card.innerHTML = `
-        <div class="score-box">総合スコア：${score} 点</div>
-        <span class="level level-${report.level}">${report.title}</span>
-        <p>${report.message}</p>
+      // 📌 HTMLに反映
+      document.getElementById("report-container").innerHTML = `
+        <h2>${report.title}</h2>
+        <p>${report.desc}</p>
 
-        <h3>おすすめ対策</h3>
+        <h3>おすすめアクション</h3>
         <ul>
-          ${report.advice.map(a => `<li>${a}</li>`).join("")}
+          ${report.actions.map(a => `<li>${a}</li>`).join("")}
         </ul>
+
+        <h3>解説</h3>
+        <p>${report.detail}</p>
       `;
     }
+
+    loadReport();
   </script>
 </body>
 </html>
