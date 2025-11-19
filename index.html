@@ -4,28 +4,87 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NightWarm</title>
+
   <style>
     body {
-      font-family: sans-serif;
-      padding: 20px;
-      background: #eef6ff;
+      margin: 0;
+      padding: 0;
+      background: #0B1D39;
+      font-family: "Segoe UI", sans-serif;
+      color: #fff;
     }
-    h1 {
-      color: #1e4fa3;
+
+    header {
+      text-align: center;
+      padding: 30px 0 10px;
     }
-    .box {
-      background: white;
-      padding: 20px;
+
+    .logo {
+      font-size: 32px;
+      font-weight: bold;
+      color: #A8C8FF;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #A8C8FF;
+      opacity: 0.8;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: #ffffff;
+      color: #0B1D39;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+    }
+
+    .card h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background: #3D74C0;
+      color: white;
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      border: none;
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
     }
+
+    .btn:hover {
+      opacity: 0.85;
+    }
+
   </style>
 </head>
+
 <body>
-  <h1>NightWarm（仮）</h1>
-  <div class="box">
-    <p>睡眠中の「足が冷える」「夜間頻尿」を改善するガイドアプリ（テスト版）です。</p>
-    <p>Vercelデプロイ成功！</p>
+
+  <header>
+    <div class="logo">🌙 NightWarm</div>
+    <div class="subtitle">夜間の冷え × 頻尿をやさしくサポート</div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>メニュー</h2>
+      <button class="btn">足の冷えチェック</button>
+      <button class="btn">夜間頻尿リスク診断</button>
+      <button class="btn">改善プランを見る</button>
+    </div>
   </div>
+
 </body>
 </html>
