@@ -1,278 +1,248 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NightWarm 冷えチェック</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NightWarm</title>
 
-    <style>
-        body {
-            font-family: "Segoe UI", sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(180deg, #2b2e3a, #1e2028);
-            color: #fff;
-        }
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0033cc">
 
-        .container {
-            max-width: 420px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+  <!-- アイコン -->
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
 
-        h1 {
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 1.8em;
-            font-weight: 600;
-        }
+  <!-- UI 基本デザイン -->
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f7fc;
+      color: #333;
+    }
 
-        .card {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 20px;
-            border-radius: 14px;
-            margin-top: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
+    header {
+      background: #0033cc;
+      color: #fff;
+      text-align: center;
+      padding: 20px 10px;
+    }
 
-        .question {
-            font-size: 1.2em;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
 
-        .options {
-            margin-top: 10px;
-        }
+    #app {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-        .option {
-            background: rgba(255,255,255,0.15);
-            padding: 12px 14px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+    .question-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
 
-        .option:hover {
-            background: rgba(255,255,255,0.25);
-        }
+    .question-title {
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      font-weight: bold;
+    }
 
-        .option.selected {
-            background: #ffb74d;
-            color: #000;
-            font-weight: bold;
-        }
+    .option {
+      background: #eaf0ff;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
+    .option:hover {
+      background: #d6e3ff;
+    }
 
-        button {
-            padding: 12px 18px;
-            font-size: 1em;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
+    .option.selected {
+      background: #0033cc;
+      color: white;
+    }
 
-        #prevBtn {
-            background: #777;
-        }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
 
-        #nextBtn {
-            background: #ff9800;
-            color: #000;
-        }
+    button {
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
 
-        #resultScreen {
-            display: none;
-            text-align: center;
-        }
+    .back-btn {
+      background: #ccc;
+      color: #333;
+    }
 
-        #scoreResult {
-            font-size: 1.5em;
-            margin-top: 20px;
-        }
+    .next-btn {
+      background: #0033cc;
+      color: #fff;
+    }
 
-        .hidden {
-            display: none;
-        }
-    </style>
+    .hidden {
+      display: none;
+    }
+
+    #result {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    #score {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #0033cc;
+      text-align: center;
+    }
+
+    #advice {
+      margin-top: 20px;
+      line-height: 1.8;
+      white-space: pre-line;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>NightWarm 冷えチェック</h1>
+  <header>
+    <h1>NightWarm（夜間頻尿 × 冷えケア）</h1>
+  </header>
 
-        <!-- 質問カード -->
-        <div class="card" id="questionCard">
-            <div id="questionText" class="question"></div>
-            <div id="optionsContainer" class="options"></div>
+  <div id="app">
+    <div id="question-section" class="question-box">
+      <div id="question-text" class="question-title"></div>
+      <div id="options"></div>
 
-            <div class="nav-buttons">
-                <button id="prevBtn">＜ 戻る</button>
-                <button id="nextBtn">次へ ＞</button>
-            </div>
-        </div>
-
-        <!-- 結果表示画面 -->
-        <div id="resultScreen" class="card">
-            <h2>診断結果</h2>
-            <div id="scoreResult"></div>
-            <button onclick="restart()" style="margin-top:20px;background:#ff9800;color:#000;">
-                もう一度チェックする
-            </button>
-        </div>
+      <div class="nav-buttons">
+        <button id="backBtn" class="back-btn">戻る</button>
+        <button id="nextBtn" class="next-btn">次へ</button>
+      </div>
     </div>
 
-    <script>
+    <div id="result" class="hidden">
+      <div id="score"></div>
+      <div id="advice"></div>
+    </div>
+  </div>
 
-        function loadReport(score) {
-  fetch("/questions/report.json")
-    .then(response => response.json())
-    .then(data => {
-      const reports = data.reports;
+<script>
+  let questions = [];
+  let currentIndex = 0;
+  let answers = [];
 
-      // スコアに該当するレポートを検索
-      const report = reports.find(r => {
-        const [min, max] = r.range.split("-").map(Number);
-        return score >= min && score <= max;
-      });
-
-      showReport(report);
+  // ▼ GitHub Pages でも動く相対パス
+  fetch("questions/behavior.json")
+    .then((res) => {
+      if (!res.ok) throw new Error("JSON 読み込みエラー");
+      return res.json();
+    })
+    .then((data) => {
+      questions = data.questions;
+      answers = Array(questions.length).fill(null);
+      showQuestion(currentIndex);
+    })
+    .catch(() => {
+      alert("質問データ（behavior.json）が読み込めません。");
     });
-}
 
-function showReport(report) {
-  const resultDiv = document.getElementById("result");
-  resultDiv.innerHTML = `
-    <h2>${report.title}</h2>
-    <p>${report.message}</p>
-    <h3>おすすめ対策</h3>
-    <ul>
-      ${report.advice.map(a => `<li>${a}</li>`).join("")}
-    </ul>
-  `;
-}
+  function showQuestion(index) {
+    const q = questions[index];
+    document.getElementById("question-text").textContent = q.text;
 
-        
-        let questions = [];
-        let current = 0;
-        let answers = [];
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
 
-        // JSON 読み込み
-        async function loadQuestions() {
-            try {
-                const res = await fetch("questions/behavior.json");
+    q.options.forEach((opt, i) => {
+      const div = document.createElement("div");
+      div.className = "option";
 
-                if (!res.ok) {
-                    throw new Error("behavior.json が読み込めませんでした");
-                }
+      if (answers[index] === opt.score) {
+        div.classList.add("selected");
+      }
 
-                questions = await res.json();
-                renderQuestion();
-            } catch (e) {
-                document.getElementById("questionText").innerText =
-                    "質問データ（behavior.json）が読み込めません。";
-                console.error(e);
-            }
-        }
+      div.textContent = opt.label;
+      div.onclick = () => {
+        answers[index] = opt.score;
+        showQuestion(index);
+      };
+      optionsDiv.appendChild(div);
+    });
 
-        // 質問を画面に反映
-        function renderQuestion() {
-            const q = questions[current];
+    document.getElementById("backBtn").style.visibility =
+      index === 0 ? "hidden" : "visible";
 
-            document.getElementById("questionText").innerText = (current + 1) + ". " + q.question;
+    document.getElementById("nextBtn").textContent =
+      index === questions.length - 1 ? "診断する" : "次へ";
+  }
 
-            const optContainer = document.getElementById("optionsContainer");
-            optContainer.innerHTML = "";
+  document.getElementById("nextBtn").onclick = () => {
+    if (answers[currentIndex] == null) {
+      alert("回答を選択してください");
+      return;
+    }
 
-            q.options.forEach((opt, index) => {
-                const div = document.createElement("div");
-                div.className = "option";
-                div.innerText = opt.label;
+    if (currentIndex === questions.length - 1) {
+      showResult();
+      return;
+    }
 
-                if (answers[current] === index) {
-                    div.classList.add("selected");
-                }
+    currentIndex++;
+    showQuestion(currentIndex);
+  };
 
-                div.onclick = () => {
-                    answers[current] = index;
-                    renderQuestion();
-                };
+  document.getElementById("backBtn").onclick = () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      showQuestion(currentIndex);
+    }
+  };
 
-                optContainer.appendChild(div);
-            });
+  function showResult() {
+    const total = answers.reduce((a, b) => a + b, 0);
 
-            // 戻るボタン制御
-            document.getElementById("prevBtn").style.visibility =
-                current === 0 ? "hidden" : "visible";
+    const resultPanel = document.getElementById("result");
+    const scoreDiv = document.getElementById("score");
+    const adviceDiv = document.getElementById("advice");
 
-            // 最後だけ「診断へ」
-            document.getElementById("nextBtn").innerText =
-                current === questions.length - 1 ? "診断する" : "次へ ＞";
-        }
+    scoreDiv.textContent = `あなたのスコア：${total}点`;
 
-        // 次へ
-        document.getElementById("nextBtn").onclick = () => {
-            if (answers[current] == null) {
-                alert("回答を選んでください");
-                return;
-            }
+    let message = "";
 
-            // 最後の質問だったら診断へ
-            if (current === questions.length - 1) {
-                showResult();
-                return;
-            }
+    if (total <= 10) {
+      message = "【低リスク】\n寒さ・頻尿の問題は軽度です。基本ケアで改善が期待できます。";
+    } else if (total <= 20) {
+      message = "【中リスク】\n冷え・夜間頻尿の傾向があります。生活習慣の調整が効果的です。";
+    } else if (total <= 28) {
+      message = "【高リスク】\n夜間頻尿と末梢冷えが強く関連しています。積極的なケアが必要です。";
+    } else {
+      message = "【非常に高リスク】\n足冷え・夜間頻尿の悪循環が疑われます。集中的な改善が必要です。";
+    }
 
-            current++;
-            renderQuestion();
-        };
+    adviceDiv.textContent = message;
 
-        // 戻る
-        document.getElementById("prevBtn").onclick = () => {
-            if (current > 0) {
-                current--;
-                renderQuestion();
-            }
-        };
-
-        // 結果計算
-        function showResult() {
-            let score = 0;
-
-            answers.forEach((ans, i) => {
-                score += questions[i].options[ans].score;
-            });
-
-            document.getElementById("questionCard").style.display = "none";
-            document.getElementById("resultScreen").style.display = "block";
-
-            document.getElementById("scoreResult").innerText =
-                "あなたの冷えスコアは「" + score + " 点」です。";
-        }
-
-        function restart() {
-            current = 0;
-            answers = [];
-            document.getElementById("resultScreen").style.display = "none";
-            document.getElementById("questionCard").style.display = "block";
-            renderQuestion();
-        }
-
-            function finishTest() {
-  const score = totalScore; // 合計点
-  window.location.href = `result.html?score=${score}`;
-}
-        
-        // 初期ロード
-        loadQuestions();
-    </script>
-
+    document.getElementById("question-section").classList.add("hidden");
+    resultPanel.classList.remove("hidden");
+  }
+</script>
 </body>
 </html>
