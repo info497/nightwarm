@@ -167,7 +167,7 @@ function showReport(report) {
         // JSON 読み込み
         async function loadQuestions() {
             try {
-                const res = await fetch("/questions/behavior.json");
+                const res = await fetch("questions/behavior.json");
 
                 if (!res.ok) {
                     throw new Error("behavior.json が読み込めませんでした");
