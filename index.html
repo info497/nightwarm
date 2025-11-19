@@ -2,245 +2,42 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>NightWarm</title>
-  <meta name="description" content="NightWarm - 夜のリラックスと快適な睡眠のための温熱サポートツール。" />
-  <meta name="theme-color" content="#0b1b3f" />
 
-  <!-- PWA設定 -->
-  <link rel="manifest" href="/manifest.json" />
-  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+  <!-- PWA manifest -->
+  <link rel="manifest" href="/manifest.json">
 
-  <!-- Googleフォント -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
+  <!-- アイコン（念のため）-->
+  <link rel="icon" href="/icons/icon-192.png" type="image/png">
 
+  <!-- 基本UIスタイル -->
   <style>
     body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(180deg, #091735 0%, #102d75 100%);
-      color: #fff;
+      font-family: "Arial", sans-serif;
       margin: 0;
-      padding: 1.5rem;
+      padding: 0;
+      background: #f4f6fb;
+      color: #333;
     }
 
-    h1 {
+    header {
+      background: linear-gradient(135deg, #0033cc, #0055ff);
+      color: #fff;
+      padding: 16px;
       text-align: center;
-      margin-top: 1rem;
-      margin-bottom: 0.2rem;
-      font-size: 2rem;
-      font-weight: 600;
+      font-size: 1.3rem;
+      font-weight: bold;
     }
 
-    .sub {
-      text-align: center;
-      font-size: 0.95rem;
-      opacity: 0.8;
-      margin-bottom: 1.5rem;
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px;
     }
 
     .card {
-      background: #ffffff10;
-      backdrop-filter: blur(6px);
-      padding: 1.5rem;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px #00000030;
-      text-align: center;
-      margin-bottom: 1.8rem;
-    }
-
-    .card img {
-      width: 120px;
-      margin: 0 auto 1rem;
-      display: block;
-    }
-
-    .btn {
-      background: #4a7aff;
-      color: white;
-      border: none;
-      padding: 14px 20px;
-      width: 100%;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      cursor: pointer;
-      box-shadow: 0 3px 10px #00000040;
-      transition: 0.2s;
-    }
-
-    .btn:hover {
-      opacity: 0.9;
-      transform: translateY(-2px);
-    }
-
-    #installBtn {
-      display: none;
-      margin-top: 10px;
-    }
-  </style>
-</head>
-
-<body>
-
-  <h1>NightWarm</h1>
-  <p class="sub">夜の冷えと睡眠の悩みをサポート</p>
-
-  <!-- メインカード -->
-  <div class="card">
-    <img src="/icons/icon-192.png" alt="NightWarm icon" />
-
-    <button class="btn" onclick="location.href='#flow'">
-      足の冷えチェック（質問）
-    </button>
-
-    <button class="btn" onclick="alert('温めのコツガイドはまだ準備中です')">
-      温めガイド
-    </button>
-
-    <button class="btn" onclick="alert('夜間頻尿の改善ガイドは準備中です')">
-      夜間頻尿サポート
-    </button>
-  </div>
-
-  <!-- インストールボタン -->
-  <button id="installBtn" class="btn" style="background:#00b894">インストール</button>
-
-  <script>
-    // PWA install
-    let deferredPrompt;
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('installBtn').style.display = 'block';
-    });
-
-    document.getElementById('installBtn').addEventListener('click', async () => {
-      deferredPrompt.prompt();
-      deferredPrompt = null;
-      document.getElementById('installBtn').style.display = 'none';
-    });
-  </script>
-
-
-  <!-- ==========================
-   足の冷えチェック：質問フロー
-   ========================== -->
-<section id="flow" style="margin-top:2rem;">
-  <h2 style="text-align:center; margin-bottom:1rem;">足の冷えチェック</h2>
-
-  <div id="flowBox" 
-       style="background:#ffffff10; padding:1rem; border-radius:12px; 
-              box-shadow:0 3px 10px #00000030;">
-    
-    <p id="flowQuestion" style="font-size:1.1rem; line-height:1.6;">
-      質問を読み込み中…
-    </p>
-
-    <div style="margin-top:1rem;">
-      <button class="btn" onclick="answerFlow('yes')" 
-              style="background:#4a7aff;">はい</button>
-
-      <button class="btn" onclick="answerFlow('no')" 
-              style="background:#777;">いいえ</button>
-    </div>
-  </div>
-
-  <p id="flowResult" 
-     style="margin-top:1.5rem; padding:1rem; display:none;
-            background:#ffffff10; border-radius:12px; font-size:1.05rem;">
-  </p>
-</section>
-
-  
-  <script>
-  // -------------------------
-  // 足の冷えチェック用の質問
-  // -------------------------
-  const questions = [
-    {
-      q: "夜中に足が冷えて目が覚めることはありますか？",
-      key: "coldNight"
-    },
-    {
-      q: "靴下を履いて寝ていますか？",
-      key: "socks"
-    },
-    {
-      q: "寝る前に足が冷たいと感じますか？",
-      key: "coldBeforeSleep"
-    },
-    {
-      q: "日中にも足先が冷えることが多いですか？",
-      key: "dayCold"
-    }
-  ];
-
-  // 回答を保存
-  let answers = {};
-  let step = 0;
-
-  // 初期表示
-  function loadQuestion() {
-    document.getElementById("flowQuestion").textContent = questions[step].q;
-  }
-  loadQuestion();
-
-  // 回答処理
-  function answerFlow(val) {
-    const key = questions[step].key;
-    answers[key] = val;
-
-    step++;
-
-    // 最後まで行ったら結果生成
-    if (step >= questions.length) {
-      showResult();
-    } else {
-      loadQuestion();
-    }
-  }
-
-  // -------------------------
-  // 結果生成ロジック
-  // -------------------------
-  function showResult() {
-    document.getElementById("flowBox").style.display = "none";
-
-    let msg = "";
-
-    const yesCount = Object.values(answers).filter(v => v === "yes").length;
-
-    if (yesCount >= 3) {
-      msg = `
-        【結果】強い冷え性傾向があります。<br><br>
-        ● 足湯（10分）が最も効果的<br>
-        ● 靴下は「薄い綿素材」に変更推奨<br>
-        ● 足先の血流低下の可能性 → 温度管理を強化<br>
-        ● 夜間頻尿との関連も強い傾向
-      `;
-    } else if (yesCount === 2) {
-      msg = `
-        【結果】軽度の冷え傾向があります。<br><br>
-        ● 入眠前の足の温め（温タオル or 足首ストレッチ）で改善可能<br>
-        ● 布団内温度が低い可能性あり
-      `;
-    } else {
-      msg = `
-        【結果】足の冷えは強くなさそうです。<br><br>
-        ● 夜間頻尿が主原因の可能性あり<br>
-        ● 水分摂取リズム・カフェイン・室温をチェック
-      `;
-    }
-
-    const resultBox = document.getElementById("flowResult");
-    resultBox.innerHTML = msg;
-    resultBox.style.display = "block";
-  }
-</script>
-
-</body>
-</html>
+      background: #fff;
+      border-radius: 14px;
+      p
