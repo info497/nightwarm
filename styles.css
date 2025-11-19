@@ -1,0 +1,88 @@
+body {
+  margin: 0;
+  font-family: "Noto Sans JP", sans-serif;
+  background: #f5f8ff;
+  color: #333;
+}
+
+.app-container {
+  max-width: 480px;
+  margin: auto;
+  padding-bottom: 40px;
+}
+
+.header {
+  text-align: center;
+  padding: 30px 10px 20px;
+  background: linear-gradient(135deg, #0033cc, #001a66);
+  color: white;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+}
+
+.title {
+  font-size: 26px;
+  margin: 10px 0 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  opacity: 0.8;
+  margin: 5px 0 0;
+}
+
+.menu-buttons {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.btn-primary {
+  background: #0033cc;
+  color: white;
+  padding: 18px;
+  border-radius: 14px;
+  border: none;
+  font-size: 20px;
+}
+
+.btn-secondary {
+  background: #e8eeff;
+  color: #0033cc;
+  padding: 16px;
+  border-radius: 14px;
+  border: none;
+  font-size: 18px;
+}
+
+.section {
+  padding: 25px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.card h3 {
+  margin-top: 0;
+}
+
+.btn-small {
+  background: #0033cc;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 12px;
+}
