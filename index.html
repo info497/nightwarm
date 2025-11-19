@@ -267,6 +267,14 @@ function showReport(report) {
 
         // 初期ロード
         loadQuestions();
+
+
+
+        function finishTest() {
+  const score = totalScore; // 合計点
+  window.location.href = `result.html?score=${score}`;
+}
+
     </script>
 
 </body>
