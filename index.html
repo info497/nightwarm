@@ -265,16 +265,13 @@ function showReport(report) {
             renderQuestion();
         }
 
-        // 初期ロード
-        loadQuestions();
-
-
-
-        function finishTest() {
+            function finishTest() {
   const score = totalScore; // 合計点
   window.location.href = `result.html?score=${score}`;
 }
-
+        
+        // 初期ロード
+        loadQuestions();
     </script>
 
 </body>
