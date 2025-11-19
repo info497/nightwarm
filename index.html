@@ -100,4 +100,30 @@
       温めガイド
     </button>
 
-    <button class="btn" onclick="alert('夜間頻尿の改善ガイドは準
+    <button class="btn" onclick="alert('夜間頻尿の改善ガイドは準備中です')">
+      夜間頻尿サポート
+    </button>
+  </div>
+
+  <!-- インストールボタン -->
+  <button id="installBtn" class="btn" style="background:#00b894">インストール</button>
+
+  <script>
+    // PWA install
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBtn').style.display = 'block';
+    });
+
+    document.getElementById('installBtn').addEventListener('click', async () => {
+      deferredPrompt.prompt();
+      deferredPrompt = null;
+      document.getElementById('installBtn').style.display = 'none';
+    });
+  </script>
+
+</body>
+</html>
