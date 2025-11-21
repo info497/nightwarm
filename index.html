@@ -21,10 +21,16 @@
             max-width: 480px;
             padding: 20px;
             padding-bottom: 90px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 120px;
+            margin: 20px auto 10px;
+            opacity: 0.95;
         }
 
         h1 {
-            text-align: center;
             font-size: 1.6rem;
             margin-bottom: 15px;
             color: #c7d7ff;
@@ -37,6 +43,7 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.35);
+            text-align: left;
         }
 
         .question-text {
@@ -75,15 +82,15 @@
             cursor: pointer;
             display: none;
         }
-
-        .next-btn:active {
-            opacity: 0.8;
-        }
     </style>
 </head>
 
 <body>
     <div class="container">
+
+        <!-- ★ロゴ追加 -->
+        <img src="/mnt/data/A_flat,_vector_graphic_logo_design_represents_Nigh.png" class="logo" alt="NightWarm ロゴ">
+
         <h1>NightWarm チェック</h1>
 
         <div id="question-container" class="question-card">
@@ -121,7 +128,6 @@
                     totalScore += ans.score;
                     document.getElementById("nextBtn").style.display = "block";
 
-                    // 選択済み強調
                     document.querySelectorAll(".answer-btn")
                         .forEach(b => b.style.opacity = 0.4);
                     btn.style.opacity = 1;
@@ -135,11 +141,9 @@
             currentIndex++;
 
             if (currentIndex >= questions.length) {
-                // 結果へ
                 localStorage.setItem("nightwarmScore", totalScore);
                 window.location.href = "result.html";
             } else {
-                // 次の質問へ
                 document.getElementById("nextBtn").style.display = "none";
                 showQuestion();
             }
