@@ -21,13 +21,18 @@
             max-width: 480px;
             padding: 20px;
             padding-bottom: 80px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 120px;
+            margin: 10px auto 10px;
+            opacity: 0.95;
         }
 
         h1 {
-            text-align: center;
             font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: #c7d7ff;
         }
 
@@ -38,46 +43,19 @@
             padding: 22px;
             margin-bottom: 25px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            text-align: left;
         }
 
-        .score {
-            font-size: 2.6rem;
-            text-align: center;
-            margin: 0;
-            font-weight: 700;
-            color: #89b4ff;
-        }
+        .score { font-size: 2.6rem; text-align: center; margin: 0; font-weight: 700; color: #89b4ff; }
+        .score-label { text-align: center; margin-top: 4px; font-size: 1rem; color: #d4def7; }
 
-        .score-label {
-            text-align: center;
-            margin-top: 4px;
-            font-size: 1rem;
-            color: #d4def7;
-        }
+        .detail-title { font-size: 1.2rem; margin-top: 20px; margin-bottom: 10px; font-weight: 600; color: #b8c7ff; }
+        .detail-text { line-height: 1.7; font-size: 0.95rem; color: #e5e9f2; }
 
-        .detail-title {
-            font-size: 1.2rem;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #b8c7ff;
-        }
-
-        .detail-text {
-            line-height: 1.7;
-            font-size: 0.95rem;
-            color: #e5e9f2;
-        }
-
-        .advice-list {
-            margin-top: 15px;
-            padding-left: 20px;
-            line-height: 1.8;
-        }
+        .advice-list { margin-top: 15px; padding-left: 20px; line-height: 1.8; }
 
         .home-btn {
             width: 100%;
-            display: block;
             background: linear-gradient(135deg, #4f7cff, #273e7a);
             color: white;
             text-align: center;
@@ -87,17 +65,17 @@
             font-weight: 600;
             text-decoration: none;
             margin-top: 32px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-
-        .home-btn:hover {
-            opacity: 0.9;
+            display: block;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
+
+        <!-- ★ロゴ追加 -->
+        <img src="/mnt/data/A_flat,_vector_graphic_logo_design_represents_Nigh.png" class="logo" alt="NightWarm ロゴ">
+
         <h1>診断結果</h1>
 
         <div id="result" class="result-card">
@@ -119,30 +97,23 @@
             try {
                 const score = Number(localStorage.getItem("nightwarmScore") || 0);
 
-                // 🔥 report.json を読み込む
                 const res = await fetch("report.json");
-                const json = await res.json();
+                const report = await res.json();
 
-                // JSON の score_ranges を取得
-                const report = json.score_ranges;
-
-                // score に該当するレンジを検索
                 let target = report.find(r => score >= r.min && score <= r.max);
                 if (!target) target = report[0];
 
-                // 表示反映
+                // 表示
                 document.querySelector(".score").innerText = score + "点";
-                document.querySelector(".score-label").innerText = target.title;
-                document.getElementById("comment").innerText = target.summary;
+                document.querySelector(".score-label").innerText = target.label;
+                document.getElementById("comment").innerText = target.comment;
 
-                const adviceList = document.getElementById("advice");
-                adviceList.innerHTML = "";
-
-                // 3つまで表示（必要なら3つに制限）
-                target.advice.slice(0, 3).forEach(a => {
+                const adv = document.getElementById("advice");
+                adv.innerHTML = "";
+                target.advice.forEach(a => {
                     const li = document.createElement("li");
                     li.innerText = a;
-                    adviceList.appendChild(li);
+                    adv.appendChild(li);
                 });
 
             } catch (e) {
