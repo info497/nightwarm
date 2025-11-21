@@ -1,159 +1,73 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NightWarm｜診断結果</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NightWarm - 結果</title>
+
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#111">
 
     <style>
         body {
-            background: radial-gradient(circle at top, #1b2c48, #0a0f1a 60%);
-            color: #e7ecf5;
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: #eee;
             padding: 20px;
-            padding-bottom: 80px;
         }
-
         h1 {
+            color: #ffcc66;
             text-align: center;
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #c7d7ff;
         }
-
-        .result-card {
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(12px);
-            border-radius: 18px;
-            padding: 22px;
-            margin-bottom: 25px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-        }
-
-        .score {
-            font-size: 2.6rem;
-            text-align: center;
-            margin: 0;
-            font-weight: 700;
-            color: #89b4ff;
-        }
-
-        .score-label {
-            text-align: center;
-            margin-top: 4px;
-            font-size: 1rem;
-            color: #d4def7;
-        }
-
-        .detail-title {
-            font-size: 1.2rem;
+        #result-box {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
             margin-top: 20px;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #b8c7ff;
         }
-
-        .detail-text {
-            line-height: 1.7;
-            font-size: 0.95rem;
-            color: #e5e9f2;
-        }
-
-        .advice-list {
-            margin-top: 15px;
-            padding-left: 20px;
-            line-height: 1.8;
-        }
-
-        .home-btn {
-            width: 100%;
+        .btn {
             display: block;
-            background: linear-gradient(135deg, #4f7cff, #273e7a);
-            color: white;
+            background: #ffcc66;
+            color: #000;
+            padding: 12px;
+            border-radius: 6px;
             text-align: center;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            margin-top: 20px;
             text-decoration: none;
-            margin-top: 32px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            font-weight: bold;
         }
-
-        .home-btn:hover {
-            opacity: 0.9;
+        .btn:hover {
+            opacity: 0.85;
         }
     </style>
-</head>
-
-<body>
-    <div class="container">
-        <h1>診断結果</h1>
-
-        <div id="result" class="result-card">
-            <p class="score">--</p>
-            <p class="score-label">読み込み中...</p>
-
-            <p class="detail-title">コメント</p>
-            <p class="detail-text" id="comment">---</p>
-
-            <p class="detail-title">改善ポイント TOP3</p>
-            <ul class="advice-list" id="advice"></ul>
-        </div>
-
-        <a href="index.html" class="home-btn">最初の画面へ戻る</a>
-    </div>
 
     <script>
-        async function loadReport() {
+        async function loadResult() {
             try {
-                const score = Number(localStorage.getItem("nightwarmScore") || 0);
-
-                // 🔥 report.json を読み込む
                 const res = await fetch("report.json");
-                const json = await res.json();
+                if (!res.ok) throw new Error("not found");
 
-                // JSON の score_ranges を取得
-                const report = json.score_ranges;
+                const data = await res.json();
 
-                // score に該当するレンジを検索
-                let target = report.find(r => score >= r.min && score <= r.max);
-                if (!target) target = report[0];
-
-                // 表示反映
-                document.querySelector(".score").innerText = score + "点";
-                document.querySelector(".score-label").innerText = target.title;
-                document.getElementById("comment").innerText = target.summary;
-
-                const adviceList = document.getElementById("advice");
-                adviceList.innerHTML = "";
-
-                // 3つまで表示（必要なら3つに制限）
-                target.advice.slice(0, 3).forEach(a => {
-                    const li = document.createElement("li");
-                    li.innerText = a;
-                    adviceList.appendChild(li);
-                });
+                document.getElementById("data-area").innerHTML =
+                    "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
 
             } catch (e) {
-                console.error(e);
-                document.querySelector(".score-label").innerText =
-                    "結果データ（report.json）が読み込めません。";
+                document.getElementById("data-area").innerHTML =
+                    "<p style='color:#ff6666;'>結果データ（report.json）が読み込めません。</p>";
             }
         }
-
-        loadReport();
     </script>
+</head>
+<body onload="loadResult()">
+
+    <h1>診断結果</h1>
+
+    <div id="result-box">
+        <div id="data-area">読み込み中...</div>
+    </div>
+
+    <a class="btn" href="index.html">戻る</a>
 
 </body>
 </html>
