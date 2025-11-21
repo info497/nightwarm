@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NightWarm｜診断結果</title>
-    <link rel="stylesheet" href="styles.css" />
 
     <style>
         body {
@@ -119,25 +118,31 @@
         async function loadReport() {
             try {
                 const score = Number(localStorage.getItem("nightwarmScore") || 0);
+
+                // 🔥 report.json を読み込む
                 const res = await fetch("report.json");
-                const report = await res.json();
+                const json = await res.json();
 
+                // JSON の score_ranges を取得
+                const report = json.score_ranges;
+
+                // score に該当するレンジを検索
                 let target = report.find(r => score >= r.min && score <= r.max);
-                if (!target) {
-                    target = report[0];
-                }
+                if (!target) target = report[0];
 
-                // 画面反映
+                // 表示反映
                 document.querySelector(".score").innerText = score + "点";
-                document.querySelector(".score-label").innerText = target.label;
-                document.getElementById("comment").innerText = target.comment;
+                document.querySelector(".score-label").innerText = target.title;
+                document.getElementById("comment").innerText = target.summary;
 
-                const adv = document.getElementById("advice");
-                adv.innerHTML = "";
-                target.advice.forEach(a => {
+                const adviceList = document.getElementById("advice");
+                adviceList.innerHTML = "";
+
+                // 3つまで表示（必要なら3つに制限）
+                target.advice.slice(0, 3).forEach(a => {
                     const li = document.createElement("li");
                     li.innerText = a;
-                    adv.appendChild(li);
+                    adviceList.appendChild(li);
                 });
 
             } catch (e) {
