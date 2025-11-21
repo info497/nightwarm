@@ -1,73 +1,124 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>診断レポート</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NightWarm｜結果</title>
+
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="icon" type="image/png" href="./icons/icon-192.png">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f6f8fc;
+        }
+        .container {
+            max-width: 650px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #0033cc;
+        }
+        .result-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+            margin-top: 20px;
+        }
+        .score {
+            font-size: 28px;
+            text-align: center;
+            font-weight: bold;
+            color: #0033cc;
+        }
+        .advice {
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+        .back-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 20px;
+            background: #0033cc;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            text-decoration: none;
+            text-align: center;
+            width: 200px;
+        }
+    </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>診断レポート</h1>
+<div class="container">
 
-    <p id="score-text">計算中...</p>
-    <div id="report-container">結果を読み込み中...</div>
+    <h1>NightWarm</h1>
+    <p style="text-align:center;">夜間頻尿 × 足の冷えチェック 結果</p>
 
-    <button onclick="window.location.href='index.html'" class="restart-btn">
-      もう一度診断する
-    </button>
-  </div>
+    <div id="result-box" class="result-box">
+        <p class="score" id="score-text">スコア：--</p>
+        <h2 id="result-title">解析中...</h2>
+        <p id="result-summary"></p>
+        <div class="advice">
+            <h3>おすすめの改善ポイント</h3>
+            <ul id="advice-list"></ul>
+        </div>
+    </div>
 
-  <script>
-    async function loadReport() {
-      // 📌 index.html から scores を取得
-      const params = new URLSearchParams(window.location.search);
-      const scores = JSON.parse(params.get("scores") || "[]");
+    <a href="./index.html" class="back-btn">もう一度チェックする</a>
 
-      const total = scores.reduce((a, b) => a + b, 0);
+</div>
 
-      document.getElementById("score-text").innerText =
-        `あなたのスコア：${total}点（0〜36点）`;
-
-      // 📌 レポート JSON 読み込み
-      let reportData = {};
-      try {
+<script>
+async function loadReport() {
+    try {
         const response = await fetch("/questions/report.json");
-        if (!response.ok) throw new Error("report.json が見つかりません");
-        reportData = await response.json();
-      } catch (e) {
-        document.getElementById("report-container").innerText =
-          "レポートデータが読み込めません。";
-        return;
-      }
+        const report = await response.json();
 
-      // 📌 スコアに応じて分類
-      let report = "";
-      if (total <= 12) {
-        report = reportData.low;
-      } else if (total <= 24) {
-        report = reportData.mid;
-      } else {
-        report = reportData.high;
-      }
+        const saved = localStorage.getItem("nightwarm_result");
+        if (!saved) {
+            document.getElementById("result-title").innerText = "結果データが見つかりません。";
+            return;
+        }
 
-      // 📌 HTMLに反映
-      document.getElementById("report-container").innerHTML = `
-        <h2>${report.title}</h2>
-        <p>${report.desc}</p>
+        const { score } = JSON.parse(saved);
 
-        <h3>おすすめアクション</h3>
-        <ul>
-          ${report.actions.map(a => `<li>${a}</li>`).join("")}
-        </ul>
+        document.getElementById("score-text").innerText = "スコア：" + score + " 点";
 
-        <h3>解説</h3>
-        <p>${report.detail}</p>
-      `;
+        // スコアに合う範囲を取得
+        const range = report.score_ranges.find(r => score >= r.min && score <= r.max);
+
+        if (!range) {
+            document.getElementById("result-title").innerText = "解析エラー";
+            return;
+        }
+
+        document.getElementById("result-title").innerText = range.title;
+        document.getElementById("result-summary").innerText = range.summary;
+
+        const list = document.getElementById("advice-list");
+        list.innerHTML = "";
+
+        range.advice.forEach(a => {
+            const li = document.createElement("li");
+            li.innerText = a;
+            list.appendChild(li);
+        });
+
+    } catch (e) {
+        console.error("report.json 読み込みエラー", e);
+        document.getElementById("result-title").innerText = "レポートデータが読み込めません。";
     }
+}
 
-    loadReport();
-  </script>
+loadReport();
+</script>
+
 </body>
 </html>
